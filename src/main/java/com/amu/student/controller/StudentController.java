@@ -1,8 +1,8 @@
-package com.amu.student.Controller;
+package com.amu.student.controller;
 
 import com.amu.student.entities.Student;
-import com.amu.student.Service.StudentService;
-import lombok.RequiredArgsConstructor;
+import com.amu.student.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +11,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/students")
-@RequiredArgsConstructor
 public class StudentController {
 
     private final StudentService studentService;
+
+    @Autowired
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
     @PostMapping
     public ResponseEntity<Student> save(@RequestBody Student student) {
@@ -38,5 +42,11 @@ public class StudentController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         studentService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/school/{school-id}")
+    public ResponseEntity<List<Student>> findAllStudens(
+            @PathVariable("school-id") Long schoolId ){
+        return ResponseEntity.ok(studentService.findAllStudentsBySchool(schoolId));
     }
 }
